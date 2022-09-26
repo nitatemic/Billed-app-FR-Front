@@ -53,6 +53,8 @@ export const card = (bill) => {
 }
 
 export const cards = (bills) => {
+  console.log(data);
+
   return bills && bills.length ? bills.map(bill => card(bill)).join("") : ""
 }
 
@@ -80,7 +82,6 @@ export default class {
 
   handleClickIconEye = () => {
     const billUrl = $('#icon-eye-d').attr("data-bill-url")
-    const imgWidth = Math.floor($('#modaleFileAdmin1').width() * 0.8)
     $('#modaleFileAdmin1')
     .find(".modal-body")
     .html(`<div style='text-align: center;'><img width=100% src=${billUrl} alt="Bill"/></div>`)
