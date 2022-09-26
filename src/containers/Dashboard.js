@@ -53,7 +53,6 @@ export const card = (bill) => {
 }
 
 export const cards = (bills) => {
-  console.log(data);
 
   return bills && bills.length ? bills.map(bill => card(bill)).join("") : ""
 }
