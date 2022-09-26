@@ -27,6 +27,9 @@
   position: absolute;
   left: 120px;
   top: 52px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-height: calc(100% - 92px);
 }
 
 .status-bills-container {
