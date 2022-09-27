@@ -1,6 +1,5 @@
 import { formatDate } from '../app/format.js'
 import DashboardFormUI from '../views/DashboardFormUI.js'
-import BigBilledIcon from '../assets/svg/big_billed.js'
 import { ROUTES_PATH } from '../constants/routes.js'
 import USERS_TEST from '../constants/usersTest.js'
 import Logout from "./Logout.js"
@@ -87,26 +86,22 @@ export default class {
     if (typeof $('#modaleFileAdmin1').modal === 'function') $('#modaleFileAdmin1').modal('show')
   }
 
-  handleEditTicket(e, bill, bills) {
-    if (this.counter === undefined || this.id !== bill.id) this.counter = 0
-    if (this.id === undefined || this.id !== bill.id) this.id = bill.id
-    if (this.counter % 2 === 0) {
-      bills.forEach(b => {
-        $(`#open-bill${b.id}`).css({ background: '#0D5AE5' })
-      })
-      $(`#open-bill${bill.id}`).css({ background: '#2A2B35' })
-      $('.dashboard-right-container div').html(DashboardFormUI(bill))
-      $('.vertical-navbar').css({ height: '100vh' })
-      this.counter++
-    } else {
-      $(`#open-bill${bill.id}`).css({ background: '#0D5AE5' })
 
-      $('.dashboard-right-container div').html(`
-        <div id="big-billed-icon" data-testid="big-billed-icon"> ${BigBilledIcon} </div>
-      `)
-      $('.vertical-navbar').css({ height: '100vh' })
-      this.counter++
-    }
+  /**
+   * It's a function that handles the click event of the edit button of a bill
+   * @param e - event
+   * @param bill - the bill object
+   * @param bills - an array of objects that contains all the bills
+   */
+  handleEditTicket(e, bill, bills) {
+    if (this.id === undefined || this.id !== bill.id) this.id = bill.id
+    bills.forEach(b => {
+      $(`#open-bill${b.id}`).css({ background: '#0D5AE5' })
+    })
+    $(`#open-bill${bill.id}`).css({ background: '#2A2B35' })
+    $('.dashboard-right-container div').html(DashboardFormUI(bill))
+    $('.vertical-navbar').css({ height: '100vh' })
+    this.counter++
     $('#icon-eye-d').click(this.handleClickIconEye)
     $('#btn-accept-bill').click((e) => this.handleAcceptSubmit(e, bill))
     $('#btn-refuse-bill').click((e) => this.handleRefuseSubmit(e, bill))
@@ -132,18 +127,27 @@ export default class {
     this.onNavigate(ROUTES_PATH['Dashboard'])
   }
 
+  /**
+   * This function is called when a user clicks on a status header. It checks if the user has clicked
+   * on the same status header twice in a row. If so, it will hide the tickets associated with that
+   * status. If not, it will show the tickets associated with that status
+   * @param e - the event
+   * @param bills - an array of objects that contain all the information about the tickets
+   * @param index - the index of the status button that was clicked
+   * @returns The bills array is being returned.
+   */
   handleShowTickets(e, bills, index) {
     if (this.counter === undefined || this.index !== index) this.counter = 0
     if (this.index === undefined || this.index !== index) this.index = index
     if (this.counter % 2 === 0) {
-      $(`#arrow-icon${this.index}`).css({ transform: 'rotate(0deg)'})
+      $(`#arrow-icon${this.index}`).css({ transform: 'rotate(0deg)' })
       $(`#status-bills-container${this.index}`)
-        .html(cards(filteredBills(bills, getStatus(this.index))))
-      this.counter ++
+      .html(cards(filteredBills(bills, getStatus(this.index))))
+      this.counter++
     } else {
-      $(`#arrow-icon${this.index}`).css({ transform: 'rotate(90deg)'})
+      $(`#arrow-icon${this.index}`).css({ transform: 'rotate(90deg)' })
       $(`#status-bills-container${this.index}`)
-        .html("")
+      .html("")
       this.counter ++
     }
 
@@ -155,6 +159,8 @@ export default class {
 
   }
 
+  /* A function that is called when the user is on the dashboard page. It is used to get all the bills
+  from the database. */
   getBillsAllUsers = () => {
     if (this.store) {
       return this.store
@@ -178,6 +184,7 @@ export default class {
 
   // not need to cover this function by tests
   /* istanbul ignore next */
+  /* This function is used to update a bill in the database. */
   updateBill = (bill) => {
     if (this.store) {
     return this.store
