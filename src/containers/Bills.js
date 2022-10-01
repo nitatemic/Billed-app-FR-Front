@@ -61,7 +61,7 @@ export default class {
             }
           }
         })
-        console.log('length', newBills.length)
+        console.log(newBills)
         return newBills
       })
     }

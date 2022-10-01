@@ -3,6 +3,7 @@ import DashboardFormUI from '../views/DashboardFormUI.js'
 import { ROUTES_PATH } from '../constants/routes.js'
 import USERS_TEST from '../constants/usersTest.js'
 import Logout from "./Logout.js"
+import BigBilledIcon from '../assets/svg/big_billed.js'
 
 export const filteredBills = (data, status) => {
   return (data && data.length) ?
@@ -93,18 +94,27 @@ export default class {
    * @param bill - the bill object
    * @param bills - an array of objects that contains all the bills
    */
+  //If the card is already selected, it will unselect it. If not, it will select it
   handleEditTicket(e, bill, bills) {
-    if (this.id === undefined || this.id !== bill.id) this.id = bill.id
+    if (this.selectedCard === undefined) this.selectedCard = null
     bills.forEach(b => {
       $(`#open-bill${b.id}`).css({ background: '#0D5AE5' })
     })
-    $(`#open-bill${bill.id}`).css({ background: '#2A2B35' })
-    $('.dashboard-right-container div').html(DashboardFormUI(bill))
-    $('.vertical-navbar').css({ height: '100vh' })
-    this.counter++
-    $('#icon-eye-d').click(this.handleClickIconEye)
-    $('#btn-accept-bill').click((e) => this.handleAcceptSubmit(e, bill))
-    $('#btn-refuse-bill').click((e) => this.handleRefuseSubmit(e, bill))
+    if (this.selectedCard === null) {
+      this.selectedCard = bill.id
+      $(`#open-bill${bill.id}`).css({ background: '#2A2B35' })
+      $('.dashboard-right-container div').html(DashboardFormUI(bill))
+      $('.vertical-navbar').css({ height: '100vh' })
+      this.counter++
+      $('#icon-eye-d').click(this.handleClickIconEye)
+      $('#btn-accept-bill').click((e) => this.handleAcceptSubmit(e, bill))
+      $('#btn-refuse-bill').click((e) => this.handleRefuseSubmit(e, bill))
+    } else if (this.selectedCard === bill.id) {
+      this.selectedCard = null
+      //Show big-billed-icon in dashboard-right-container
+      document.querySelector('.dashboard-right-container div').innerHTML = `<div><div id="big-billed-icon" data-testid="big-billed-icon"> ${BigBilledIcon} </div></div>`
+      this.counter--
+    }
   }
 
   handleAcceptSubmit = (e, bill) => {
