@@ -3,6 +3,10 @@ import { formatDate, formatStatus } from "../app/format.js"
 import Logout from "./Logout.js"
 
 export default class {
+  /**
+   * The constructor function is called when the class is instantiated. It takes an object as an
+   * argument and assigns the properties of that object to the class instance
+   */
   constructor({ document, onNavigate, store, localStorage }) {
     this.document = document
     this.onNavigate = onNavigate
@@ -12,19 +16,24 @@ export default class {
     const iconEye = document.querySelectorAll(`div[data-testid="icon-eye"]`)
     if (iconEye) iconEye.forEach(icon => {
       icon.addEventListener('click', () => this.handleClickIconEye(icon))
+      console.log(icon)
     })
     new Logout({ document, localStorage, onNavigate })
   }
 
+  /* A function that is called when the user clicks on the button "New Bill" */
   handleClickNewBill = () => {
     this.onNavigate(ROUTES_PATH['NewBill'])
   }
 
+  /* This function is called when the user clicks on the eye icon. It gets the bill url from the icon
+  and displays it in a modal. */
   handleClickIconEye = (icon) => {
     const billUrl = icon.getAttribute("data-bill-url")
+    const billID = icon.getAttribute("data-bill-id")
     $('#modaleFile')
     .find(".modal-body")
-    .html(`<div style='text-align: center;' class="bill-proof-container"><img width=100% src=${billUrl} alt="Bill" /></div>`)
+    .html(`<div style='text-align: center;' class="bill-proof-container"><img width=100% src=${billUrl} data-testid="modalFile" alt="Bill" /></div>`)
     $('#modaleFile').modal('show')
   }
 

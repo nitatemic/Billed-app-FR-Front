@@ -36,5 +36,20 @@ describe("Given I am connected as an employee", () => {
       const datesSorted = [...dates].sort(antiChrono)
       expect(dates).toEqual(datesSorted)
     })
+    /* Test when I click on the eye icon, it should open a modal */
+    describe("When I click on the eye icon", () => {
+      test("Then a modal should open", () => {
+        document.body.innerHTML = BillsUI({ data: bills })
+        const eyeIcon = screen.getAllByTestId('icon-eye')
+        eyeIcon.forEach(icon => {
+          icon.click()
+          /* Get the aria-hidden attribute of the modal */
+          const modal = screen.getByTestId('modal')
+          const isModalVisible = modal.getAttribute('aria-hidden')
+          expect(isModalVisible).toBe('true')
+        })
+
+      })
+    })
   })
 })
