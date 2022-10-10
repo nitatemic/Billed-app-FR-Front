@@ -4,8 +4,9 @@
  * @jest-environment jsdom
  */
 
-import { fireEvent, screen, waitFor } from "@testing-library/dom"
+import { screen, waitFor } from "@testing-library/dom"
 import '@testing-library/jest-dom'
+import userEvent from '@testing-library/user-event'
 import NewBillUI from "../views/NewBillUI.js"
 import NewBill from "../containers/NewBill.js"
 import mockStore from "../__mocks__/store"
@@ -45,9 +46,9 @@ describe("Given I am connected as an employee", () => {
       expect(btnSubmit).toBeTruthy()
     })
 
-    it("Should test if we send something else than the authorized files", async () => {
-      /* Create a new file */
-      const file = new File(['(⌐□_□)'], 'chucknorris.pdf', { type: 'application/pdf' });
+    it("Should test if we can send something else than the authorized files", async () => {
+      /* reset the html */
+      document.body.innerHTML = '';
       const html = NewBillUI();
       document.body.innerHTML = html;
       const onNavigate = (pathname) => {
@@ -75,33 +76,67 @@ describe("Given I am connected as an employee", () => {
 
       const fileInput = screen.getByTestId("file");
       fileInput.addEventListener("change", handleChangeFile);
-      fireEvent.change(fileInput, {
-        target: {
-          files: [file]
-        }
-      });
-      expect(handleChangeFile).toHaveBeenCalled();
-      await waitFor(() => screen.getByTestId('error-message'))
-      expect(screen.getByTestId('error-message')).toBeTruthy()
+      const file = new File(['(⌐□_□)'], 'chucknorris.pdf', { type: 'application/pdf' });
+      await userEvent.upload(fileInput, file, { applyAccept: false })
+      expect(handleChangeFile).toHaveReturnedWith(false);
+      await waitFor(() => expect(screen.findByText('Le fichier doit être au format jpg, jpeg ou png'))
+      .toBeTruthy());
+      !expect(fileInput.files.item(0)).toBe(file);
     })
 
-    it("Shouldn't be able to choose a send a file that is not a .jpg, .jpeg or .png", async () => {
-      /* Test handleChangeFile */
-      const html = NewBillUI()
-      document.body.innerHTML = html
-      const fileInput = screen.getByTestId('file')
-      /* Create a new pdf file */
-      const pdfFile = new File(['pdf'], 'pdf.pdf', { type: 'application/pdf' })
-      /* Put the file in the file input */
-      Object.defineProperty(fileInput, 'files', {
-        value: [pdfFile]
-      })
-      /* Trigger handleChangeFile */
-      fileInput.dispatchEvent(new Event('change'))
-      /* Check if the error message is displayed */
-      const errorMessage = screen.getByTestId('error-message')
-      expect(errorMessage).toBeTruthy()
-      expect(errorMessage).toHaveTextContent('Le fichier doit être au format jpg, jpeg ou png.')
+    it("Should be able to send the form with a picture", async () => {
+      const html = NewBillUI();
+      document.body.innerHTML = html;
+      const onNavigate = (pathname) => {
+        document.body.innerHTML = ROUTES({ pathname });
+      };
+      /* Define the local storage */
+      Object.defineProperty(window, "localStorage", {
+        value: localStorageMock,
+      });
+      window.localStorage.setItem(
+        "user",
+        JSON.stringify({
+          type: "Employee",
+        })
+      );
+
+      const newBill = new NewBill({
+        document,
+        onNavigate,
+        store: mockStore,
+        localStorage: window.localStorage,
+      });
+
+      const handleChangeFile = jest.fn((e) => newBill.handleChangeFile(e));
+      const handleSubmit = jest.fn((e) => newBill.handleSubmit(e));
+
+      const form = screen.getByTestId("form-new-bill");
+      /* Complete the form */
+      const type = screen.getByTestId('expense-type')
+      const name = screen.getByTestId('expense-name')
+      const amount = screen.getByTestId('amount')
+      const date = screen.getByTestId('datepicker')
+      const vat = screen.getByTestId('vat')
+      const pct = screen.getByTestId('pct')
+      const commentary = screen.getByTestId('commentary')
+      userEvent.selectOptions(type, 'Restaurants et bars')
+      userEvent.type(name, 'Restaurant')
+      userEvent.type(amount, '100')
+      userEvent.type(date, '2021-10-10')
+      userEvent.type(vat, '20')
+      userEvent.type(pct, '20')
+      userEvent.type(commentary, 'Restaurant')
+
+      const file = new File(['(⌐□_□)'], 'chucknorris.png', { type: 'image/png' });
+      const fileInput = screen.getByTestId("file");
+
+      fileInput.addEventListener("change", handleChangeFile);
+      await userEvent.upload(fileInput, file)
+      expect(fileInput.files.item(0)).toBe(file)
+      expect(handleChangeFile).toHaveBeenCalled();
+
+
     })
   })
 })

@@ -17,70 +17,80 @@ export default class NewBill {
     new Logout({ document, localStorage, onNavigate })
   }
 
-  FileTypeCheck = (file) => {
-    const validFileType = ['jpeg', 'jpg', 'png']
-    const fileExtension = file.name.split('.').pop().toLowerCase()
-    const isValidExtension = validFileType.includes(fileExtension)
-    return isValidExtension
-  }
-
   /* A function that is called when the user selects a file. It is used to upload the file to the
   server and get the url of the file. */
   handleChangeFile = e => {
     e.preventDefault()
+
     const file = this.document.querySelector(`input[data-testid="file"]`).files[0]
     const filePath = e.target.value.split(/\\/g)
     const fileName = filePath[filePath.length - 1]
+    const extension = fileName.split('.').pop()
     const formData = new FormData()
     const email = JSON.parse(localStorage.getItem("user")).email
     formData.append('file', file)
     formData.append('email', email)
 
-    /* Check file type */
-    const fileType = file.type
-    if (fileType !== "image/png" && fileType !== "image/jpg" && fileType !== "image/jpeg") {
-      console.error('Le fichier doit être au format jpg, jpeg ou png');
-      //Add a child to justificatif to display the error message
-      const justificatif = document.getElementById(`justificatif-container`)
-      if (document.getElementById('error-message')) {
-        return false
-      } else {
-        const errorMessage = document.createElement('p')
-        errorMessage.id = 'error-message'
-        errorMessage.innerHTML = 'Le fichier doit être au format jpg, jpeg ou png'
-        errorMessage.style.color = 'red'
-        errorMessage.setAttribute('data-testid', 'error-message')
-        justificatif.appendChild(errorMessage)
-        return false
-      }
-    }
+    console.log(fileName + " fichier")
+
     if (document.getElementById('error-message')) {
       document.getElementById('error-message').remove()
     }
-    this.store
-    .bills()
-    .create({
-      data: formData,
-      headers: {
-        noContentType: true
-      }
-    })
-    .then(({ fileUrl, key }) => {
-      this.billId = key
-      this.fileUrl = fileUrl
-      this.fileName = fileName
-    }).catch(error => console.error(error))
+
+    if (document.getElementById('validation-message')) {
+      document.getElementById('validation-message').remove()
+    }
+
+    let regex = new RegExp("(.*?)\.(jpg|jpeg|png)$");
+    const justificatif = document.getElementById(`justificatif-container`)
+    switch (regex.test(fileName)) {
+
+      case false:
+        console.log('File not supported')
+        this.document.querySelector(`input[data-testid="file"]`).value = ''
+        const errorMessage = document.createElement('p')
+        errorMessage.id = 'error-message'
+        errorMessage.setAttribute('data-testid', 'error-message')
+        errorMessage.innerHTML = 'Le fichier doit être au format jpg, jpeg ou png'
+        errorMessage.style.color = 'red'
+        justificatif.appendChild(errorMessage)
+        return false
+
+      case true :
+        console.log('File supported')
+        const validationMessage = document.createElement('p')
+        validationMessage.id = 'validation-message'
+        validationMessage.setAttribute('data-testid', 'validation-message')
+        validationMessage.innerHTML = "Parfait, le fichier est au bon format !"
+        validationMessage.style.color = 'green'
+        justificatif.appendChild(validationMessage)
+        this.store
+        .bills()
+        .create({
+          data: formData,
+          headers: {
+            noContentType: true
+          }
+        })
+        .then(({ fileUrl, key }) => {
+          this.billId = key
+          this.fileUrl = fileUrl
+          this.fileName = fileName
+          return true
+        }).catch(error => console.error(error))
+    }
   }
 
   /* A function that is called when the user submits the form. It is used to create a new bill. */
   handleSubmit = e => {
     e.preventDefault()
-    console.log('e.target.querySelector(`input[data-testid="datepicker"]`).value',
-      e.target.querySelector(`input[data-testid="datepicker"]`).value)
     const email = JSON.parse(localStorage.getItem("user")).email
 
     /*  Check if the file is a .jpg, .jpeg or .png file. */
     if (this.fileUrl && this.fileName && this.fileName.match(/.(jpg|jpeg|png)$/i)) {
+      if (document.getElementById('error-message')) {
+        document.getElementById('error-message').remove()
+      }
       const bill = {
         email,
         type: e.target.querySelector(`select[data-testid="expense-type"]`).value,
@@ -97,8 +107,18 @@ export default class NewBill {
       this.updateBill(bill)
       this.onNavigate(ROUTES_PATH['Bills'])
     } else {
-      console.error('Le fichier doit être au format jpg, jpeg ou png');
-      return
+      if (document.getElementById('error-message')) {
+        document.getElementById('error-message').remove()
+      }
+      console.error('Il manque le fichier');
+      const justificatif = document.getElementById(`justificatif-container`)
+      const errorMessage = document.createElement('p')
+      errorMessage.id = 'error-message'
+      errorMessage.innerHTML = 'Le fichier est requis'
+      errorMessage.style.color = 'red'
+      errorMessage.setAttribute('data-testid', 'error-message')
+      justificatif.appendChild(errorMessage)
+      return false
     }
   }
 
