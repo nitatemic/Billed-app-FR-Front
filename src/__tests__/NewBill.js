@@ -13,7 +13,6 @@ import mockStore from "../__mocks__/store"
 import { ROUTES } from '../constants/routes.js';
 import { localStorageMock } from "../__mocks__/localStorage.js";
 
-jest.mock("../app/store", () => mockStore);
 
 describe("Given I am connected as an employee", () => {
 
@@ -135,8 +134,6 @@ describe("Given I am connected as an employee", () => {
       await userEvent.upload(fileInput, file)
       expect(fileInput.files.item(0)).toBe(file)
       expect(handleChangeFile).toHaveBeenCalled();
-
-
     })
   })
 })
