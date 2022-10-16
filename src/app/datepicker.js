@@ -47,7 +47,7 @@ class Datepicker {
                 show(true);
             }
             else if (
-                document.getElementById("datepicker-frame") != null &&
+                document.getElementById("datepicker-frame") !== null &&
                 !e.path.includes(document.getElementById("datepicker-frame"))
             ) show(false);
         });
