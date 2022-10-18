@@ -1,5 +1,6 @@
 #loading {
   position: absolute;
-  top: 40%; left: 50%;
+  top: 40%;
   text-align: center;
+  width: calc(100% - 80px);
 }
