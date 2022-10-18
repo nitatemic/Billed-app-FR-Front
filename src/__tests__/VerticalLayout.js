@@ -14,8 +14,7 @@ describe('Given I am connected as Employee', () => {
       type: 'Employee'
     })
     window.localStorage.setItem('user', user)
-    const html = VerticalLayout(120)
-    document.body.innerHTML = html
+    document.body.innerHTML = VerticalLayout(120)
     expect(screen.getByTestId('icon-window')).toBeTruthy()
     expect(screen.getByTestId('icon-mail')).toBeTruthy()
   })
