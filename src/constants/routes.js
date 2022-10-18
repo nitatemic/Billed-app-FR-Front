@@ -6,7 +6,7 @@ import DashboardUI from "../views/DashboardUI.js"
 export const ROUTES_PATH = {
   Login: '/',
   Bills: '#employee/bills',
-  NewBill : '#employee/bill/new',
+  NewBill: '#employee/bill/new',
   Dashboard: '#admin/dashboard'
 }
 
@@ -22,6 +22,8 @@ export const ROUTES = ({ pathname, data, error, loading }) => {
       return DashboardUI({ data, error, loading })
     default:
       return LoginUI({ data, error, loading })
+      /* Redirect to login page */
+      window.location.href = ROUTES_PATH['Login']
   }
 }
 

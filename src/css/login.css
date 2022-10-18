@@ -1,8 +1,6 @@
 .page-div {
   width: 80%;
-  margin:auto;
-  margin-top: 40px;
-  margin-top: 10%;
+  margin: 10% auto auto;
 }
 
 .form-signin {
@@ -10,7 +8,6 @@
   max-width: 330px;
   padding: 15px;
   margin: auto;
-
 }
 
 h2 {
