@@ -31,8 +31,6 @@ export default class NewBill {
     formData.append('file', file)
     formData.append('email', email)
 
-    console.log(fileName + " fichier")
-
     if (document.getElementById('error-message')) {
       document.getElementById('error-message').remove()
     }
