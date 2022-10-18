@@ -6,10 +6,10 @@ export default (error) => {
       ${VerticalLayout()}
       <div class='content'>
         <div class='content-header'>
-          <div class='content-title'> Oups, une erreur s'est produite !</div>
+          <div class='content-title'> Erreur</div>
         </div>
         <div data-testid="error-message">
-          ${error === 404 ? `On dirait que vous êtes perdu, cette page n'existe pas. Voici un bouton pour revenir à la page de connexion` : 'Une erreur inconnue est survenue.'}
+          ${error ? error : ""}
         </div>
         <!-- Button to go to login page -->
         <div class="button-container">
