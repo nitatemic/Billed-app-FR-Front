@@ -87,7 +87,7 @@ export default class NewBill {
     const email = JSON.parse(localStorage.getItem("user")).email
 
     /*  Check if the file is a .jpg, .jpeg or .png file. */
-    if (this.fileUrl && this.fileName && this.fileName.match(/.(jpg|jpeg|png)$/i)) {
+    if (this.fileUrl && this.fileName && this.fileName.test(/.(jpg|jpeg|png)$/i)) {
       if (document.getElementById('error-message')) {
         document.getElementById('error-message').remove()
       }
