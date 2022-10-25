@@ -1,7 +1,8 @@
 {
   "scripts": {
     "test": "jest --coverage --noStackTrace --silent=false",
-    "dev": "vite dev"
+    "dev": "vite dev",
+    "dev:tunnel": "vite dev --tunnel"
   },
   "jest": {
     "verbose": false,
