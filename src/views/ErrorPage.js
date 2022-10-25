@@ -10,6 +10,8 @@ export default (error) => {
         </div>
         <div data-testid="error-message">
           ${error ? error : ""}
+          </br>
+          ${(error === 404) ? `<p>On dirait que vous êtes perdu. Voici un bouton pour retrouver votre chemin.</p>` : ""}
         </div>
         <!-- Button to go to login page -->
         <div class="button-container">

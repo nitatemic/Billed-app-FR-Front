@@ -63,16 +63,18 @@ describe('Given I am connected and I am on some page of the app', () => {
     })
   })
   describe('When I navigate to anywhere else other than Login, Bills, NewBill, Dashboard', () => {
-    test(('Then, it should render Loginpage'), () => {
+    test(('Then, it should render 404 Error'), async () => {
       const pathname = '/anywhere-else'
       const html = ROUTES({
         pathname,
         data,
         loading,
         error
-       })
-       document.body.innerHTML = html
-       expect(screen.getAllByText('Administration')).toBeTruthy()
+      })
+      document.body.innerHTML = html
+      await expect(screen.getByTestId("error-message")).toBeTruthy()
+      expect(screen.getAllByText(
+        'On dirait que vous êtes perdu. Voici un bouton pour retrouver votre chemin.')).toBeTruthy()
     })
   })
 })
