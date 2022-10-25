@@ -102,7 +102,7 @@ export default class NewBill {
 	  console.log(this.fileName)
 	  console.log(this.fileName.match(/.(jpg|jpeg|png)$/i))
 	  /*  Check if the file is a .jpg, .jpeg or .png file. */
-	  if (this.fileUrl && this.fileName && this.fileName.matchAll(/.(jpg|jpeg|png)$/i)) {
+	  if (this.fileUrl && this.fileName && this.fileName.match(/.(jpg|jpeg|png)$/i)) {
 		  if (document.getElementById('error-message')) {
 			  document.getElementById('error-message').remove()
 		  }
