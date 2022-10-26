@@ -98,9 +98,6 @@ export default class NewBill {
   handleSubmit = e => {
 	  e.preventDefault()
 	  const email = JSON.parse(localStorage.getItem("user")).email
-	  console.log(this.fileUrl)
-	  console.log(this.fileName)
-	  console.log(this.fileName.match(/.(jpg|jpeg|png)$/i))
 	  /*  Check if the file is a .jpg, .jpeg or .png file. */
 	  if (this.fileUrl && this.fileName && this.fileName.match(/.(jpg|jpeg|png)$/i)) {
 		  if (document.getElementById('error-message')) {
@@ -125,7 +122,6 @@ export default class NewBill {
       if (document.getElementById('error-message')) {
         document.getElementById('error-message').remove()
       }
-      console.error('Il manque le fichier');
       const justificatif = document.getElementById(`justificatif-container`)
       const errorMessage = document.createElement('p')
       errorMessage.id = 'error-message'

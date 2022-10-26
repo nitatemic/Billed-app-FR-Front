@@ -16,7 +16,6 @@ export default class {
     const iconEye = document.querySelectorAll(`div[data-testid="icon-eye"]`)
     if (iconEye) iconEye.forEach(icon => {
       icon.addEventListener('click', () => this.handleClickIconEye(icon))
-      console.log(icon)
     })
     new Logout({ document, localStorage, onNavigate })
   }
@@ -62,7 +61,7 @@ export default class {
           catch (e) {
             // if for some reason, corrupted data was introduced, we manage here failing formatDate function
             // log the error and return unformatted date in that case
-            console.log(e, 'for', doc)
+            console.error(e, 'for', doc)
             return {
               ...doc,
               date: doc.date,
@@ -70,7 +69,6 @@ export default class {
             }
           }
         })
-        console.log(newBills)
         return newBills
       })
     }

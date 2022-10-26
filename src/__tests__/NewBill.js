@@ -17,6 +17,38 @@ import { localStorageMock } from "../__mocks__/localStorage.js";
 describe("Given I am connected as an employee", () => {
 
   describe("When I am on NewBill Page", () => {
+    test("Then the page should render correctly", () => {
+      const html = NewBillUI()
+      document.body.innerHTML = html
+      expect(screen.getAllByText("Envoyer une note de frais")).toBeTruthy()
+    })
+    test("The mail icon should be active", async () => {
+      /* Define the local storage */
+      Object.defineProperty(window, "localStorage", {
+        value: localStorageMock,
+      });
+      window.localStorage.setItem(
+        "user",
+        JSON.stringify({
+          type: "Employee",
+        })
+      );
+
+      /* Navigate to the page Newbill */
+      document.body.innerHTML = NewBillUI()
+
+      /* Check if the mail icon is active */
+      const iconWindow = await screen.getByTestId("icon-window")
+      const iconMail = await screen.getByTestId("icon-mail")
+      expect(iconWindow).toBeTruthy()
+      expect(iconMail).toBeTruthy()
+      await waitFor(() => {
+        expect(iconMail.classList.contains("active-icon")).toBeTruthy()
+      })
+      expect(iconWindow.classList.contains("active-icon")).toBeFalsy()
+
+
+    })
     it(" Should be able to view the form", async () => {
       const html = NewBillUI();
       document.body.innerHTML = html;
@@ -110,6 +142,16 @@ describe("Given I am connected as an employee", () => {
       const handleChangeFile = jest.fn((e) => newBill.handleChangeFile(e));
       const handleSubmit = jest.fn((e) => newBill.handleSubmit(e));
 
+      expect(screen.getByTestId('form-new-bill')).toBeTruthy()
+      expect(screen.getByTestId('expense-type')).toBeTruthy()
+      expect(screen.getByTestId('expense-name')).toBeTruthy()
+      expect(screen.getByTestId('amount')).toBeTruthy()
+      expect(screen.getByTestId('datepicker')).toBeTruthy()
+      expect(screen.getByTestId('vat')).toBeTruthy()
+      expect(screen.getByTestId('pct')).toBeTruthy()
+      expect(screen.getByTestId('commentary')).toBeTruthy()
+      expect(screen.getByTestId('file')).toBeTruthy()
+      expect(screen.getByTestId('btn-send-bill')).toBeTruthy()
       const form = screen.getByTestId("form-new-bill");
       /* Complete the form */
       const type = screen.getByTestId('expense-type')
