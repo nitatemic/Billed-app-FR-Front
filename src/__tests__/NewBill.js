@@ -10,8 +10,9 @@ import userEvent from '@testing-library/user-event'
 import NewBillUI from "../views/NewBillUI.js"
 import NewBill from "../containers/NewBill.js"
 import mockStore from "../__mocks__/store"
-import { ROUTES } from '../constants/routes.js';
+import { ROUTES, ROUTES_PATH } from '../constants/routes.js';
 import { localStorageMock } from "../__mocks__/localStorage.js";
+import Router from "../app/Router.js"
 
 
 describe("Given I am connected as an employee", () => {
@@ -34,9 +35,12 @@ describe("Given I am connected as an employee", () => {
         })
       );
 
-      /* Navigate to the page Newbill */
-      document.body.innerHTML = NewBillUI()
+      let root = document.createElement("div")
+      root.id = "root"
+      document.body.appendChild(root)
 
+      Router()
+      window.onNavigate(ROUTES_PATH['NewBill'])
       /* Check if the mail icon is active */
       const iconWindow = await screen.getByTestId("icon-window")
       const iconMail = await screen.getByTestId("icon-mail")
