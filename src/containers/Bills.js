@@ -29,7 +29,6 @@ export default class {
   and displays it in a modal. */
   handleClickIconEye = (icon) => {
     const billUrl = icon.getAttribute("data-bill-url")
-    const billID = icon.getAttribute("data-bill-id")
     $('#modaleFile')
     .find(".modal-body")
     .html(`<div style='text-align: center;' class="bill-proof-container"><img width=100% src=${billUrl} data-testid="modalFile" alt="Bill" /></div>`)

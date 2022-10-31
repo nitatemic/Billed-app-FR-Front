@@ -8,7 +8,7 @@ import { screen, waitFor } from "@testing-library/dom"
 import '@testing-library/jest-dom'
 import userEvent from '@testing-library/user-event'
 import NewBillUI from "../views/NewBillUI.js"
-import NewBill from "../containers/NewBill.js"
+import NewBill, { addStatus } from "../containers/NewBill.js"
 import mockStore from "../__mocks__/store"
 import { ROUTES, ROUTES_PATH } from '../constants/routes.js';
 import { localStorageMock } from "../__mocks__/localStorage.js";
@@ -18,12 +18,10 @@ import Router from "../app/Router.js"
 describe("Given I am connected as an employee", () => {
 
   describe("When I am on NewBill Page", () => {
-    test("Then the page should render correctly", () => {
-      const html = NewBillUI()
-      document.body.innerHTML = html
-      expect(screen.getAllByText("Envoyer une note de frais")).toBeTruthy()
-    })
-    test("The mail icon should be active", async () => {
+    beforeEach(() => {
+      document.body.innerHTML = ""
+      /* clear localStorage */
+      localStorage.clear()
       /* Define the local storage */
       Object.defineProperty(window, "localStorage", {
         value: localStorageMock,
@@ -41,6 +39,30 @@ describe("Given I am connected as an employee", () => {
 
       Router()
       window.onNavigate(ROUTES_PATH['NewBill'])
+    })
+    test("Then the page should render correctly", () => {
+      /*      const html = NewBillUI()
+						document.body.innerHTML = html*/
+      expect(screen.getAllByText("Envoyer une note de frais")).toBeTruthy()
+    })
+    test("The mail icon should be active", async () => {
+      /* /!* Define the local storage *!/
+			 Object.defineProperty(window, "localStorage", {
+				 value: localStorageMock,
+			 });
+			 window.localStorage.setItem(
+				 "user",
+				 JSON.stringify({
+					 type: "Employee",
+				 })
+			 );
+
+			 let root = document.createElement("div")
+			 root.id = "root"
+			 document.body.appendChild(root)
+
+			 Router()
+			 window.onNavigate(ROUTES_PATH['NewBill'])*/
       /* Check if the mail icon is active */
       const iconWindow = await screen.getByTestId("icon-window")
       const iconMail = await screen.getByTestId("icon-mail")
@@ -54,12 +76,12 @@ describe("Given I am connected as an employee", () => {
 
     })
     it(" Should be able to view the form", async () => {
-      const html = NewBillUI();
-      document.body.innerHTML = html;
-      const onNavigate = (pathname) => {
-        document.body.innerHTML = ROUTES({ pathname });
-      };
-
+      /* const html = NewBillUI();
+			 document.body.innerHTML = html;
+			 const onNavigate = (pathname) => {
+				 document.body.innerHTML = ROUTES({ pathname });
+			 };
+ */
       await waitFor(() => screen.getByTestId('form-new-bill'))
       const file = screen.getByTestId('file')
       const type = screen.getByTestId('expense-type')
@@ -89,7 +111,7 @@ describe("Given I am connected as an employee", () => {
       const onNavigate = (pathname) => {
         document.body.innerHTML = ROUTES({ pathname });
       };
-      /* Define the local storage */
+      /!* Define the local storage *!/
       Object.defineProperty(window, "localStorage", {
         value: localStorageMock,
       });
@@ -120,21 +142,6 @@ describe("Given I am connected as an employee", () => {
     })
 
     it("Should be able to send the form with a picture", async () => {
-      const html = NewBillUI();
-      document.body.innerHTML = html;
-      const onNavigate = (pathname) => {
-        document.body.innerHTML = ROUTES({ pathname });
-      };
-      /* Define the local storage */
-      Object.defineProperty(window, "localStorage", {
-        value: localStorageMock,
-      });
-      window.localStorage.setItem(
-        "user",
-        JSON.stringify({
-          type: "Employee",
-        })
-      );
 
       const newBill = new NewBill({
         document,
@@ -156,7 +163,6 @@ describe("Given I am connected as an employee", () => {
       expect(screen.getByTestId('commentary')).toBeTruthy()
       expect(screen.getByTestId('file')).toBeTruthy()
       expect(screen.getByTestId('btn-send-bill')).toBeTruthy()
-      const form = screen.getByTestId("form-new-bill");
       /* Complete the form */
       const type = screen.getByTestId('expense-type')
       const name = screen.getByTestId('expense-name')
@@ -175,11 +181,37 @@ describe("Given I am connected as an employee", () => {
 
       const file = new File(['(⌐□_□)'], 'chucknorris.png', { type: 'image/png' });
       const fileInput = screen.getByTestId("file");
-
       fileInput.addEventListener("change", handleChangeFile);
+      /* Add picture in the input */
+      await userEvent.upload(fileInput, file, { applyAccept: false })
+
+      /*fileInput.addEventListener("change", handleChangeFile);
       await userEvent.upload(fileInput, file)
+      */
       expect(fileInput.files.item(0)).toBe(file)
       expect(handleChangeFile).toHaveBeenCalled();
+    })
+  })
+})
+
+describe("Test for addStatus function", () => {
+  describe("If I send a type of status, I should get the corresponding DOM element", () => {
+    test("Should return a div with the ID 'error-message'", () => {
+      const status = "error"
+      const DOM = addStatus(status, "test")
+      expect(DOM).toBeTruthy()
+      expect(DOM.id).toBe("error-message")
+    })
+    test("Should return a div with the ID 'validation-message'", () => {
+      const status = "success"
+      const DOM = addStatus(status, "test")
+      expect(DOM).toBeTruthy()
+      expect(DOM.id).toBe("validation-message")
+    })
+    test("Should return a null element", () => {
+      const status = "other"
+      const DOM = addStatus(status, "test")
+      expect(DOM).toBeNull()
     })
   })
 })
