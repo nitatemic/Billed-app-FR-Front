@@ -1,6 +1,7 @@
 {
   "scripts": {
     "test": "jest --coverage --noStackTrace --silent=false",
+    "action": "jest --noStackTrace --silent=true",
     "dev": "vite dev",
     "dev:tunnel": "vite dev --tunnel"
   },
