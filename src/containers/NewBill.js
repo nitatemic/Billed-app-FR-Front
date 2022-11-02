@@ -23,7 +23,6 @@ export default class NewBill {
 		const file = this.document.querySelector(`input[data-testid="file"]`).files[0]
 		const filePath = e.target.value.split(/\\/g)
 		const fileName = filePath[filePath.length - 1]
-		const extension = fileName.split('.').pop()
 
 		if (document.getElementById('error-message')) {
 			document.getElementById('error-message').remove()
@@ -40,32 +39,18 @@ export default class NewBill {
 			case false:
 				console.log('File not supported')
 				this.document.querySelector(`input[data-testid="file"]`).value = ''
-				const errorMessage = document.createElement('p')
-				errorMessage.id = 'error-message'
-				errorMessage.setAttribute('data-testid', 'error-message')
-				errorMessage.innerHTML = 'Le fichier doit être au format jpg, jpeg ou png'
-				errorMessage.style.color = 'red'
-				justificatif.appendChild(errorMessage)
+				justificatif.appendChild(addStatus("error",
+					"Le fichier doit être au format jpg, jpeg ou png"))
 				return false
 
 			case true :
-				console.log('File supported')
-				const validationMessage = document.createElement('p')
-				validationMessage.id = 'validation-message'
-				validationMessage.setAttribute('data-testid', 'validation-message')
-				validationMessage.innerHTML = "Parfait, le fichier est au bon format !"
-				validationMessage.style.color = 'green'
-				justificatif.appendChild(validationMessage)
+				justificatif.appendChild(addStatus("success", "Parfait, le fichier est au bon format !"))
 
 				const formData = new FormData()
 				const email = JSON.parse(localStorage.getItem("user")).email
 
 				formData.append('file', file)
-				console.log(file)
-				console.log(...formData)
 				formData.append('email', email)
-				console.log(email)
-				console.log(...formData)
 
 				this.store
 				.bills()
@@ -79,16 +64,11 @@ export default class NewBill {
 					this.billId = key
 					this.fileUrl = filePath
 					this.fileName = fileName
-					console.log(this.fileUrl)
 					return true
 				}).catch(error => {
-						console.log(error)
-						const errorMessage = document.createElement('p')
-						errorMessage.id = 'error-message'
-						errorMessage.setAttribute('data-testid', 'error-message')
-						errorMessage.innerHTML = "Une erreur est survenue, veuillez réessayer"
-						errorMessage.style.color = 'red'
-						justificatif.appendChild(errorMessage)
+						console.error(error)
+						justificatif.appendChild(addStatus("error",
+							"Une erreur est survenue, veuillez réessayer"))
 					}
 				)
 		}
@@ -123,12 +103,7 @@ export default class NewBill {
         document.getElementById('error-message').remove()
       }
       const justificatif = document.getElementById(`justificatif-container`)
-      const errorMessage = document.createElement('p')
-      errorMessage.id = 'error-message'
-      errorMessage.innerHTML = 'Le fichier est requis'
-      errorMessage.style.color = 'red'
-      errorMessage.setAttribute('data-testid', 'error-message')
-      justificatif.appendChild(errorMessage)
+		  justificatif.appendChild(addStatus("error", "Le fichier est requis"))
       return false
     }
   }
@@ -138,11 +113,36 @@ export default class NewBill {
     if (this.store) {
       this.store
       .bills()
-      .update({data: JSON.stringify(bill), selector: this.billId})
+      .update({ data: JSON.stringify(bill), selector: this.billId })
       .then(() => {
-        this.onNavigate(ROUTES_PATH['Bills'])
+	      this.onNavigate(ROUTES_PATH['Bills'])
       })
       .catch(error => console.error(error))
     }
   }
+}
+
+export function addStatus(type, message) {
+	let DOM = document.createElement('p')
+	DOM.innerText = message
+
+	switch (type) {
+		case 'error' :
+			DOM.style.color = 'red'
+			DOM.id = 'error-message'
+			DOM.setAttribute('data-testid', 'error-message')
+			break
+
+		case 'success' :
+			DOM.style.color = 'green'
+			DOM.id = 'validation-message'
+			DOM.setAttribute('data-testid', 'validation-message')
+			break
+
+		default:
+			DOM = null
+			break
+	}
+
+	return DOM
 }
