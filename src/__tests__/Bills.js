@@ -36,6 +36,15 @@ describe("Given I am connected as an employee", () => {
       const datesSorted = [...dates].sort(antiChrono)
       expect(dates).toEqual(datesSorted)
     })
+    /* When I click on "Nouvelle note de frais" button, it should redirect to NewBill page */
+    describe("When I click on the 'Nouvelle note de frais' button", () => {
+      test("Then it should redirect to NewBill page", () => {
+        document.body.innerHTML = BillsUI({ data: bills })
+        const newBillButton = screen.getByTestId('btn-new-bill')
+        newBillButton.click()
+        expect(screen.getAllByText('Envoyer une note de frais')).toBeTruthy()
+      })
+    })
     /* Test when I click on the eye icon, it should open a modal */
     describe("When I click on the eye icon", () => {
       test("Then a modal should open", () => {
@@ -48,7 +57,6 @@ describe("Given I am connected as an employee", () => {
           const isModalVisible = modal.getAttribute('aria-hidden')
           expect(isModalVisible).toBe('true')
         })
-
       })
     })
   })

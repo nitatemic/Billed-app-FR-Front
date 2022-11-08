@@ -46,24 +46,6 @@ describe("Given I am connected as an employee", () => {
       expect(screen.getAllByText("Envoyer une note de frais")).toBeTruthy()
     })
     test("The mail icon should be active", async () => {
-      /* /!* Define the local storage *!/
-			 Object.defineProperty(window, "localStorage", {
-				 value: localStorageMock,
-			 });
-			 window.localStorage.setItem(
-				 "user",
-				 JSON.stringify({
-					 type: "Employee",
-				 })
-			 );
-
-			 let root = document.createElement("div")
-			 root.id = "root"
-			 document.body.appendChild(root)
-
-			 Router()
-			 window.onNavigate(ROUTES_PATH['NewBill'])*/
-      /* Check if the mail icon is active */
       const iconWindow = await screen.getByTestId("icon-window")
       const iconMail = await screen.getByTestId("icon-mail")
       expect(iconWindow).toBeTruthy()
@@ -76,12 +58,6 @@ describe("Given I am connected as an employee", () => {
 
     })
     it(" Should be able to view the form", async () => {
-      /* const html = NewBillUI();
-			 document.body.innerHTML = html;
-			 const onNavigate = (pathname) => {
-				 document.body.innerHTML = ROUTES({ pathname });
-			 };
- */
       await waitFor(() => screen.getByTestId('form-new-bill'))
       const file = screen.getByTestId('file')
       const type = screen.getByTestId('expense-type')
