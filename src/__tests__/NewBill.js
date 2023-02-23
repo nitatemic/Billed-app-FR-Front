@@ -4,14 +4,14 @@
  * @jest-environment jsdom
  */
 
-import { screen, waitFor } from "@testing-library/dom"
+import {screen, waitFor} from "@testing-library/dom"
 import '@testing-library/jest-dom'
 import userEvent from '@testing-library/user-event'
 import NewBillUI from "../views/NewBillUI.js"
-import NewBill, { addStatus } from "../containers/NewBill.js"
+import NewBill, {addStatus} from "../containers/NewBill.js"
 import mockStore from "../__mocks__/store"
-import { ROUTES, ROUTES_PATH } from '../constants/routes.js';
-import { localStorageMock } from "../__mocks__/localStorage.js";
+import {ROUTES, ROUTES_PATH} from '../constants/routes.js';
+import {localStorageMock} from "../__mocks__/localStorage.js";
 import Router from "../app/Router.js"
 
 
@@ -41,10 +41,9 @@ describe("Given I am connected as an employee", () => {
       window.onNavigate(ROUTES_PATH['NewBill'])
     })
     test("Then the page should render correctly", () => {
-      /*      const html = NewBillUI()
-						document.body.innerHTML = html*/
       expect(screen.getAllByText("Envoyer une note de frais")).toBeTruthy()
     })
+
     test("The mail icon should be active", async () => {
       const iconWindow = await screen.getByTestId("icon-window")
       const iconMail = await screen.getByTestId("icon-mail")
@@ -87,7 +86,6 @@ describe("Given I am connected as an employee", () => {
       const onNavigate = (pathname) => {
         document.body.innerHTML = ROUTES({ pathname });
       };
-      /!* Define the local storage *!/
       Object.defineProperty(window, "localStorage", {
         value: localStorageMock,
       });

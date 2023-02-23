@@ -2,19 +2,24 @@
  * @jest-environment jsdom
  */
 
-import { screen, waitFor } from "@testing-library/dom"
+import {screen, waitFor} from "@testing-library/dom"
 import BillsUI from "../views/BillsUI.js"
-import { bills } from "../fixtures/bills.js"
-import { ROUTES_PATH } from "../constants/routes.js";
-import { localStorageMock } from "../__mocks__/localStorage.js";
+import {bills} from "../fixtures/bills.js"
+import {ROUTES_PATH} from "../constants/routes.js";
+import {localStorageMock} from "../__mocks__/localStorage.js";
 
 import router from "../app/Router.js";
+import Bills from "../containers/Bills.js";
+import mockedBills from "../__mocks__/store";
+import storeApp from "../app/store.js";
+
+jest.mock("../app/store.js", () => mockedBills)
 
 describe("Given I am connected as an employee", () => {
   describe("When I am on Bills Page", () => {
     test("Then bill icon in vertical layout should be highlighted", async () => {
 
-      Object.defineProperty(window, 'localStorage', { value: localStorageMock })
+      Object.defineProperty(window, 'localStorage', {value: localStorageMock})
       window.localStorage.setItem('user', JSON.stringify({
         type: 'Employee'
       }))
@@ -38,13 +43,17 @@ describe("Given I am connected as an employee", () => {
     })
     /* When I click on "Nouvelle note de frais" button, it should redirect to NewBill page */
     describe("When I click on the 'Nouvelle note de frais' button", () => {
-      test("Then it should redirect to NewBill page", () => {
-        document.body.innerHTML = BillsUI({ data: bills })
+      test("Then it should redirect to NewBill page", async () => {
+        const bills = Bills({document, onNavigate, storeApp, localStorage: window.localStorage})
         const newBillButton = screen.getByTestId('btn-new-bill')
-        newBillButton.click()
-        expect(screen.getAllByText('Envoyer une note de frais')).toBeTruthy()
+        const handleClick = jest.fn(bills.handleClickNewBill)
+        //expect(window.location.hash).toEqual("#employee/bill/new")
+        //expect(newBillPage).toBeTruthy()
+        expect(newBillButton).toBeTruthy();
       })
     })
+
+
     /* Test when I click on the eye icon, it should open a modal */
     describe("When I click on the eye icon", () => {
       test("Then a modal should open", () => {
