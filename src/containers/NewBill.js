@@ -6,7 +6,6 @@ export default class NewBill {
 		this.document = document
 		this.onNavigate = onNavigate
 		this.store = store
-		console.log('this.store', this.store)
 		const formNewBill = this.document.querySelector(`form[data-testid="form-new-bill"]`)
 		formNewBill.addEventListener("submit", this.handleSubmit)
 		const file = this.document.querySelector(`input[data-testid="file"]`)
@@ -37,7 +36,6 @@ export default class NewBill {
 		switch (regex.test(fileName)) {
 
 			case false:
-				console.log('File not supported')
 				this.document.querySelector(`input[data-testid="file"]`).value = ''
 				justificatif.appendChild(addStatus("error",
 					"Le fichier doit être au format jpg, jpeg ou png"))
