@@ -161,6 +161,12 @@ describe('Given I am connected as an employee', () => {
       */
       expect(fileInput.files.item(0)).toBe(file);
       expect(handleChangeFile).toHaveBeenCalled();
+
+      /* Submit the form by clicking on the button */
+      const form = screen.getByTestId('form-new-bill');
+      form.addEventListener('submit', handleSubmit);
+      userEvent.click(screen.getByTestId('btn-send-bill'));
+      expect(handleSubmit).toHaveBeenCalled();
     });
 
     it('Should display an error if no file is sent', async () => {
