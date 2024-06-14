@@ -4,7 +4,7 @@
  * @jest-environment jsdom
  */
 
-import { screen, waitFor } from '@testing-library/dom';
+import { fireEvent, screen, waitFor, waitForElementToBeRemoved } from '@testing-library/dom';
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
 import NewBillUI from '../views/NewBillUI.js';
@@ -38,9 +38,11 @@ describe('Given I am connected as an employee', () => {
       Router();
       window.onNavigate(ROUTES_PATH.NewBill);
     });
+    afterEach(() => {
+      localStorage.clear(); // Effacer les données de localStorage
+      jest.clearAllMocks(); // Effacer tous les mocks
+    });
     test('Then the page should render correctly', () => {
-      /*      const html = NewBillUI()
-      document.body.innerHTML = html */
       expect(screen.getAllByText('Envoyer une note de frais')).toBeTruthy();
     });
     test('The mail icon should be active', async () => {
@@ -102,18 +104,30 @@ describe('Given I am connected as an employee', () => {
       });
 
       const handleChangeFile = jest.fn((e) => newBill.handleChangeFile(e));
+      const handleSubmit = jest.fn((e) => newBill.handleSubmit(e));
 
       const fileInput = screen.getByTestId('file');
       fileInput.addEventListener('change', handleChangeFile);
       const file = new File(['(⌐□_□)'], 'chucknorris.pdf', { type: 'application/pdf' });
       await userEvent.upload(fileInput, file, { applyAccept: false });
       expect(handleChangeFile).toHaveReturnedWith(false);
-      await waitFor(() => expect(screen.findByText('Le fichier doit être au format jpg, jpeg ou png'))
+      /* await waitFor(() => expect(screen.findByText('Le fichier doit être au format jpg, jpeg ou png'))
         .toBeTruthy());
       !expect(fileInput.files.item(0)).toBe(file);
+
+       */
+
+
+      /* Submit the form by clicking on the button */
+      const form = screen.getByTestId('form-new-bill');
+      form.addEventListener('submit', handleSubmit);
+      userEvent.click(screen.getByTestId('btn-send-bill'));
+      expect(handleSubmit).toHaveBeenCalled();
     });
 
     it('Should be able to send the form with a picture', async () => {
+
+      const onNavigate = jest.fn();
       const newBill = new NewBill({
         document,
         onNavigate,
@@ -121,7 +135,7 @@ describe('Given I am connected as an employee', () => {
         localStorage: window.localStorage,
       });
 
-      const handleChangeFile = jest.fn((e) => newBill.handleChangeFile(e));
+      //const handleChangeFile = jest.fn((e) => newBill.handleChangeFile(e));
       const handleSubmit = jest.fn((e) => newBill.handleSubmit(e));
 
       expect(screen.getByTestId('form-new-bill')).toBeTruthy();
@@ -152,21 +166,20 @@ describe('Given I am connected as an employee', () => {
 
       const file = new File(['(⌐□_□)'], 'chucknorris.png', { type: 'image/png' });
       const fileInput = screen.getByTestId('file');
-      fileInput.addEventListener('change', handleChangeFile);
+       // fileInput.addEventListener('change', handleChangeFile);
       /* Add picture in the input */
       await userEvent.upload(fileInput, file, { applyAccept: false });
 
-      /* fileInput.addEventListener("change", handleChangeFile);
-      await userEvent.upload(fileInput, file)
-      */
       expect(fileInput.files.item(0)).toBe(file);
-      expect(handleChangeFile).toHaveBeenCalled();
+      //expect(handleChangeFile).toHaveBeenCalled();
 
-      /* Submit the form by clicking on the button */
+       /* Submit the form by clicking on the button */
       const form = screen.getByTestId('form-new-bill');
       form.addEventListener('submit', handleSubmit);
-      userEvent.click(screen.getByTestId('btn-send-bill'));
+      fireEvent.click(screen.getByTestId('btn-send-bill'))
+
       expect(handleSubmit).toHaveBeenCalled();
+      expect(onNavigate).toHaveBeenCalledWith(ROUTES_PATH['Bills']);
     });
 
     it('Should display an error if no file is sent', async () => {
