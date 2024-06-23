@@ -11,8 +11,6 @@ import BillsContainer from '../containers/Bills.js'
 
 import router from '../app/Router.js';
 
-
-
 const onNavigate = (pathname) => {
   document.body.innerHTML = ROUTES({ pathname });
 }
