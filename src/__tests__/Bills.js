@@ -38,8 +38,6 @@ describe('Given I am connected as an employee', () => {
       expect(tbody).toBeTruthy()
       /* tbody should have children */
       expect(tbody.children).toBeTruthy()
-
-      //TODO : Check if displayed
     });
     test('Then bills should be ordered from earliest to latest', () => {
       document.body.innerHTML = BillsUI({ data: bills });

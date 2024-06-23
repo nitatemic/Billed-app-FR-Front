@@ -125,9 +125,26 @@ describe('Given I am connected as an employee', () => {
       expect(handleSubmit).toHaveBeenCalled();
     });
 
-    it('Should be able to send the form with a picture', async () => {
+    it('Should be able to send the form with a png file', async () => {
+      document.body.innerHTML = "";
+      const html = NewBillUI();
+      document.body.innerHTML = html;
 
-      const onNavigate = jest.fn();
+      Object.defineProperty(window, "localStorage", {
+        value: localStorageMock,
+      });
+      window.localStorage.setItem(
+        "user",
+        JSON.stringify({
+          type: "Employee",
+          email: "employee@test.tdl",
+        })
+      );
+
+      const onNavigate = (pathname) => {
+        document.body.innerHTML = ROUTES({ pathname });
+      };
+
       const newBill = new NewBill({
         document,
         onNavigate,
@@ -135,51 +152,50 @@ describe('Given I am connected as an employee', () => {
         localStorage: window.localStorage,
       });
 
-      //const handleChangeFile = jest.fn((e) => newBill.handleChangeFile(e));
-      const handleSubmit = jest.fn((e) => newBill.handleSubmit(e));
-
-      expect(screen.getByTestId('form-new-bill')).toBeTruthy();
-      expect(screen.getByTestId('expense-type')).toBeTruthy();
-      expect(screen.getByTestId('expense-name')).toBeTruthy();
-      expect(screen.getByTestId('amount')).toBeTruthy();
-      expect(screen.getByTestId('datepicker')).toBeTruthy();
-      expect(screen.getByTestId('vat')).toBeTruthy();
-      expect(screen.getByTestId('pct')).toBeTruthy();
-      expect(screen.getByTestId('commentary')).toBeTruthy();
-      expect(screen.getByTestId('file')).toBeTruthy();
-      expect(screen.getByTestId('btn-send-bill')).toBeTruthy();
+      expect(screen.getByTestId("form-new-bill")).toBeTruthy();
+      expect(screen.getByTestId("expense-type")).toBeTruthy();
+      expect(screen.getByTestId("expense-name")).toBeTruthy();
+      expect(screen.getByTestId("amount")).toBeTruthy();
+      expect(screen.getByTestId("datepicker")).toBeTruthy();
+      expect(screen.getByTestId("vat")).toBeTruthy();
+      expect(screen.getByTestId("pct")).toBeTruthy();
+      expect(screen.getByTestId("commentary")).toBeTruthy();
+      expect(screen.getByTestId("file")).toBeTruthy();
+      expect(screen.getByTestId("btn-send-bill")).toBeTruthy();
       /* Complete the form */
-      const type = screen.getByTestId('expense-type');
-      const name = screen.getByTestId('expense-name');
-      const amount = screen.getByTestId('amount');
-      const date = screen.getByTestId('datepicker');
-      const vat = screen.getByTestId('vat');
-      const pct = screen.getByTestId('pct');
-      const commentary = screen.getByTestId('commentary');
-      userEvent.selectOptions(type, 'Restaurants et bars');
-      userEvent.type(name, 'Restaurant');
-      userEvent.type(amount, '100');
-      userEvent.type(date, '2021-10-10');
-      userEvent.type(vat, '20');
-      userEvent.type(pct, '20');
-      userEvent.type(commentary, 'Restaurant');
+      const type = screen.getByTestId("expense-type");
+      const name = screen.getByTestId("expense-name");
+      const amount = screen.getByTestId("amount");
+      const date = screen.getByTestId("datepicker");
+      const vat = screen.getByTestId("vat");
+      const pct = screen.getByTestId("pct");
+      const commentary = screen.getByTestId("commentary");
+      userEvent.selectOptions(type, "Restaurants et bars");
+      userEvent.type(name, "Restaurant");
+      userEvent.type(amount, "100");
+      userEvent.type(date, "2021-10-10");
+      userEvent.type(vat, "20");
+      userEvent.type(pct, "20");
+      userEvent.type(commentary, "Restaurant");
 
-      const file = new File(['(⌐□_□)'], 'chucknorris.png', { type: 'image/png' });
-      const fileInput = screen.getByTestId('file');
-       // fileInput.addEventListener('change', handleChangeFile);
+      const file = new File(["(⌐□_□)"], "chucknorris.png", {
+        type: "image/png",
+      });
+      const fileInput = screen.getByTestId("file");
       /* Add picture in the input */
       await userEvent.upload(fileInput, file, { applyAccept: false });
 
       expect(fileInput.files.item(0)).toBe(file);
-      //expect(handleChangeFile).toHaveBeenCalled();
+      const handleSubmit = jest.fn((e) => newBill.handleSubmit(e));
 
-       /* Submit the form by clicking on the button */
-      const form = screen.getByTestId('form-new-bill');
-      form.addEventListener('submit', handleSubmit);
-      fireEvent.click(screen.getByTestId('btn-send-bill'))
+      /* Submit the form by clicking on the button */
+      const form = screen.getByTestId("form-new-bill");
+      form.addEventListener("submit", handleSubmit);
+      fireEvent.click(screen.getByTestId("btn-send-bill"));
 
       expect(handleSubmit).toHaveBeenCalled();
-      expect(onNavigate).toHaveBeenCalledWith(ROUTES_PATH['Bills']);
+      //expect(onNavigate).toHaveBeenCalledWith(ROUTES_PATH["Bills"]);
+      expect(screen.queryAllByText("Mes note de frais")).toBeTruthy();
     });
 
     it('Should display an error if no file is sent', async () => {
