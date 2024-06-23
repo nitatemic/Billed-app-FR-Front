@@ -10,6 +10,7 @@ import { localStorageMock } from '../__mocks__/localStorage.js';
 import BillsContainer from '../containers/Bills.js'
 
 import router from '../app/Router.js';
+import { expect } from '@jest/globals';
 
 const onNavigate = (pathname) => {
   document.body.innerHTML = ROUTES({ pathname });
@@ -30,6 +31,15 @@ describe('Given I am connected as an employee', () => {
       await waitFor(() => screen.getByTestId('icon-window'));
       const windowIcon = screen.getByTestId('icon-window');
       expect(windowIcon.classList).toContain("active-icon")
+    });
+    test('Then bills should be rendered', () => {
+      document.body.innerHTML = BillsUI({ data: bills });
+      const tbody = screen.getByTestId("tbody")
+      expect(tbody).toBeTruthy()
+      /* tbody should have children */
+      expect(tbody.children).toBeTruthy()
+
+      //TODO : Check if displayed
     });
     test('Then bills should be ordered from earliest to latest', () => {
       document.body.innerHTML = BillsUI({ data: bills });
