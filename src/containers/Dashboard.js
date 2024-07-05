@@ -96,11 +96,12 @@ export default class {
    */
   //If the card is already selected, it will unselect it. If not, it will select it
   handleEditTicket(e, bill, bills) {
+    this.selectedCard = null;
     if (this.selectedCard === undefined) this.selectedCard = null
     bills.forEach(b => {
       $(`#open-bill${b.id}`).css({ background: '#0D5AE5' })
     })
-    if (this.selectedCard === null) {
+    if (this.selectedCard !== bill.id) {
       this.selectedCard = bill.id
       $(`#open-bill${bill.id}`).css({ background: '#2A2B35' })
       $('.dashboard-right-container div').html(DashboardFormUI(bill))
@@ -109,13 +110,13 @@ export default class {
       $('#icon-eye-d').click(this.handleClickIconEye)
       $('#btn-accept-bill').click((e) => this.handleAcceptSubmit(e, bill))
       $('#btn-refuse-bill').click((e) => this.handleRefuseSubmit(e, bill))
-    } else if (this.selectedCard === bill.id) {
-      this.selectedCard = null
+    } else {
       //Show big-billed-icon in dashboard-right-container
       document.querySelector('.dashboard-right-container div').innerHTML = `<div><div id="big-billed-icon" data-testid="big-billed-icon"> ${BigBilledIcon} </div></div>`
       this.counter--
     }
   }
+
 
   handleAcceptSubmit = (e, bill) => {
     const newBill = {
