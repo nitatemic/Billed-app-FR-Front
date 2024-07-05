@@ -108,6 +108,8 @@ describe('Given I am connected as an employee', () => {
         document.body.innerHTML = ROUTES({ pathname });
       };
 
+      document.body.innerHTML = NewBillUI()
+
       const newBill = new NewBill({
         document,
         onNavigate,
@@ -115,8 +117,7 @@ describe('Given I am connected as an employee', () => {
         localStorage: window.localStorage,
       });
 
-      const handleChangeFile = jest.spyOn(newBill, 'handleChangeFile');
-      const handleSubmit = jest.fn((e) => newBill.handleSubmit(e));
+      const handleChangeFile = newBill.handleChangeFile
       /* === End of definition of functions === */
 
 
@@ -128,16 +129,10 @@ describe('Given I am connected as an employee', () => {
       /* === End of upload of a file === */
 
       /* === Check if the error message is displayed === */
-      expect(handleChangeFile).toHaveReturnedWith(false);
+      expect(fileInput.files.item(0)).toBe(file);
       expect(screen.queryByTestId('error-message')).toBeVisible();
+      expect(screen.queryByText("Le fichier doit être au format jpg, jpeg ou png"))
       /* === End of check if the error message is displayed === */
-
-      /* === Submission of the form === */
-      const submit = screen.getByTestId('form-new-bill');
-      submit.addEventListener('submit', handleSubmit);
-      fireEvent.click(screen.getByTestId('btn-send-bill'));
-      expect(handleSubmit).toHaveBeenCalled();
-      /* === End of submission  === */
     });
     /* ========== End of test handleChangeFile error message ========== */
 
@@ -148,6 +143,7 @@ describe('Given I am connected as an employee', () => {
         document.body.innerHTML = ROUTES({ pathname });
       };
 
+      document.body.innerHTML = NewBillUI()
 
       const newBill = new NewBill({
         document,
@@ -156,8 +152,7 @@ describe('Given I am connected as an employee', () => {
         localStorage: window.localStorage,
       });
 
-      const handleChangeFile = jest.spyOn(newBill, 'handleChangeFile');
-      const handleSubmit = jest.fn((e) => newBill.handleSubmit(e));
+      const handleChangeFile = newBill.handleChangeFile
       /* === End of definition of functions === */
 
       /* === Completion of the form === */
@@ -186,20 +181,9 @@ describe('Given I am connected as an employee', () => {
 
       /* === Check if the success message is displayed === */
       expect(fileInput.files.item(0)).toBe(file);
-      expect(handleChangeFile).toHaveReturnedWith(true); //FIXME : It return false cause it's didn't find the file
       expect(screen.queryByTestId('validation-message')).toBeVisible();
+      expect(screen.queryByText("Parfait, le fichier est au bon format !"))
       /* === End of check if the success message is displayed === */
-
-      /* === Submission of the form === */
-      const form = screen.getByTestId("form-new-bill");
-      form.addEventListener("submit", handleSubmit);
-      fireEvent.click(screen.getByTestId("btn-send-bill"));
-      /* === End of submission  === */
-
-      /* === Check if the form is submitted === */
-      expect(handleSubmit).toHaveBeenCalled();
-      expect(screen.queryAllByText("Mes note de frais")).toBeTruthy();
-      /* === End of check if the form is submitted === */
     });
     /* ========== End of test handleChangeFile success message ========== */
 

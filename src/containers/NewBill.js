@@ -21,7 +21,7 @@ export default class NewBill {
 
 		const file = this.document.querySelector(`input[data-testid="file"]`).files[0]
 		const filePath = e.target.value.split(/\\/g)
-		const fileName = filePath[filePath.length - 1]
+		const fileName = file.name
 
 		if (document.getElementById('error-message')) {
 			document.getElementById('error-message').remove()
