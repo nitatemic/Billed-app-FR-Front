@@ -46,8 +46,6 @@ export default class {
         const bills = Object.values(snapshot)
         // Sort bills by date
         bills.sort((a, b) => new Date(b.date) - new Date(a.date))
-        //reverse bills
-        bills.reverse()
         const newBills = bills
         .map(doc => {
           try {
