@@ -1,6 +1,6 @@
-import { ROUTES_PATH } from '../constants/routes.js'
-import { formatDate, formatStatus } from "../app/format.js"
-import Logout from "./Logout.js"
+import { ROUTES_PATH } from '../constants/routes.js';
+import { formatDate, formatStatus } from '../app/format.js';
+import Logout from './Logout.js';
 
 export default class {
   /**
@@ -42,11 +42,11 @@ export default class {
       .bills()
       .list()
       .then(snapshot => {
-        // Convert object to array
+        /* Convert object to array */
         const bills = Object.values(snapshot)
-        // Sort bills by date
+        /* Sort bills by date */
         bills.sort((a, b) => new Date(b.date) - new Date(a.date))
-        const newBills = bills
+        return bills
         .map(doc => {
           try {
             return {
@@ -66,7 +66,6 @@ export default class {
             }
           }
         })
-        return newBills
       })
     }
   }
