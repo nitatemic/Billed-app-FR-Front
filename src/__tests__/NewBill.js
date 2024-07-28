@@ -325,9 +325,9 @@ describe('Given I am a user connected as Employee and I am on NewBill page', () 
 
         document.body.innerHTML = BillsUI({ error: 'Erreur 404'})
 
-        await new Promise(process.nextTick);
-        const errorMessage = screen.getByText(/Erreur 404/);
-        expect(errorMessage).toBeTruthy();
+        await waitFor(() => {
+          expect(screen.getByText('Erreur 404')).toBeTruthy();
+        })
       });
       /* ========== End of API POST 404 error test ========== */
 
