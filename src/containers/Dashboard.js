@@ -108,6 +108,7 @@ export default class {
       $('#btn-accept-bill').click((e) => this.handleAcceptSubmit(e, bill))
       $('#btn-refuse-bill').click((e) => this.handleRefuseSubmit(e, bill))
     } else {
+      $(`#open-bill${bill.id}`).css({ background: '#0D5AE5' });
       //Show big-billed-icon in dashboard-right-container
       document.querySelector('.dashboard-right-container div').innerHTML = `<div><div id="big-billed-icon" data-testid="big-billed-icon"> ${BigBilledIcon} </div></div>`
       this.counter--
