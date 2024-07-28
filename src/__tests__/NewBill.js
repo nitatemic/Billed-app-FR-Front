@@ -18,6 +18,7 @@ import mockStore from '../__mocks__/store';
 import { ROUTES, ROUTES_PATH } from '../constants/routes.js';
 import { localStorageMock } from '../__mocks__/localStorage.js';
 import Router from '../app/Router.js';
+import BillsUI from '../views/BillsUI.js';
 /* ========== End of module import ========== */
 
 describe('Given I am connected as an employee', () => {
@@ -269,3 +270,83 @@ describe('Test for addStatus function', () => {
   });
 });
 /* ========== End of test for addStatus function ========== */
+
+/* ========== Tests API POST ========== */
+describe('Given I am a user connected as Employee and I am on NewBill page', () => {
+  beforeEach(() => {
+  /* Define the local storage */
+  Object.defineProperty(window, 'localStorage', {
+    value: localStorageMock,
+  });
+
+  window.localStorage.setItem(
+    "user",
+    JSON.stringify({
+      type: "Employee",
+      email: "employee@test.tdl",
+    })
+  );
+});
+
+  describe('When I submit the new bill', () => {
+
+    /* ========== Test API POST success ========== */
+    test('Then create a new bill from mock API POST', async () => {
+
+      const bill = [{
+        "id": "BeKy5Mo4jkmd2zOKkLzM",
+        "vat": "80",
+        "fileUrl": "https://test.storage.tld/v0/b/billable-677b6.a…f-1.jpg?alt=media&token=c1640e12-a24b-4b11-ae52-529112e9602a",
+        "status": "pending",
+        "type": "Hôtel et logement",
+        "commentary": "séminaire billed",
+        "name": "encore",
+        "fileName": "preview-facture-free-201801-pdf-1.jpg",
+        "date": "2004-04-04",
+        "amount": 400,
+        "commentAdmin": "ok",
+        "email": "a@a",
+        "pct": 20
+      }]
+
+      const SpyMockedStore = jest.spyOn(mockStore, 'bills');
+      mockStore.bills().create(bill);
+      expect(SpyMockedStore).toHaveBeenCalled();
+    });
+    /* ========== End of API POST success test ========== */
+
+    describe('When an error occurs on API', () => {
+      /* ========== Test API POST 404 error ========== */
+      test('Create a new bill from an API and fails with 404 message error', async () => {
+
+        mockStore.bills.mockImplementationOnce(() => ({
+          create: () => Promise.reject(new Error('Erreur 404')),
+        }));
+
+        document.body.innerHTML = BillsUI({ error: 'Erreur 404'})
+
+        await new Promise(process.nextTick);
+        const errorMessage = screen.getByText(/Erreur 404/);
+        expect(errorMessage).toBeTruthy();
+      });
+      /* ========== End of API POST 404 error test ========== */
+
+
+      /* ========== Test API POST 500 error ========== */
+      test('Then create new bill from an API and fails with 500 message error', async () => {
+
+        mockStore.bills.mockImplementationOnce(() => ({
+          create: (bill) => Promise.reject(new Error('Erreur 500')),
+        }));
+
+        document.body.innerHTML = BillsUI({ error: 'Erreur 500'})
+
+        await new Promise(process.nextTick);
+        const errorMessage = screen.getByText(/Erreur 500/);
+        expect(errorMessage).toBeTruthy();
+      });
+      /* ========== End of API POST 500 error test ========== */
+    });
+  });
+});
+/* ========== End of API POST tests ========== */
